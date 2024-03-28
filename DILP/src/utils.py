@@ -3,6 +3,7 @@
 from src.core import Atom
 import pyparsing as pp
 from src.core import Term, Atom
+import os
 
 def is_intensional(atom: Atom):
     '''Checks if the atom is intensional. If true returns true, otherwise returns false
@@ -44,7 +45,7 @@ INTENSIONAL_REQUIRED_MESSAGE = 'Atom is not intensional'
 
 def process_file(filename):
     # relationship will refer to 'track' in all of your examples
-    relationship = pp.Word(pp.alphas).setResultsName('relationship', listAllMatches=True)
+    relationship = pp.Word(pp.alphas+ '_').setResultsName('relationship', listAllMatches=True)
 
     number = pp.Word(pp.nums + '.')
     variable = pp.Word(pp.alphas)
@@ -113,13 +114,32 @@ def process_dir(input_dir):
 
 
 def output_rules(rules):
-    sql_query=''
+    """ Print induced rules and convert them to a sql query"""
+    sql_query="select"
     for rule in rules[::-1]:
         for i in rule:
             if i==None:
                 pass
             else:
                 print(i.head.predicate,":",i.body[0].predicate,i.body[1].predicate)
-                sql_query+=f"select %s and %s as %s,\n" % \
+                sql_query+=f" %s and %s as %s,\n" % \
                                     (i.body[0].predicate, i.body[1].predicate, i.head.predicate)
     return sql_query
+
+
+def create_table(con, input_dir):
+    """ read a parquet file and return an asql table my_table """
+    try:
+        con.sql('DROP TABLE my_table')
+        print("previous table dropped")
+    except:
+        pass
+    con.sql(f"CREATE TABLE my_table AS SELECT * FROM '%s'" % os.path.join(input_dir,'df.parquet'))
+
+    return con.sql("""select * from my_table""").df()
+
+def test_rule(con, sql_str, target_predicate="Target"):
+    """Test rule on the pandas data frame"""
+
+    df=con.sql(sql_str + 'from my_table ').df()
+    return df[[target_predicate]]

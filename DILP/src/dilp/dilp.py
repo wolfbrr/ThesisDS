@@ -14,7 +14,7 @@ import os
 
 class DILP():
 
-    def __init__(self, language_frame: Language_Frame, background: list, positive: list, negative: list, program_template: Program_Template):
+    def __init__(self, language_frame: Language_Frame, background: list, positive: list, negative: list, program_template: Program_Template, allow_target_recursion=False):
         '''
         Arguments:
             language_frame {Language_Frame} -- language frame
@@ -29,6 +29,7 @@ class DILP():
         self.negative = negative
         self.program_template = program_template
         self.training_data = OrderedDict()  # index to label
+        self.allow_target_recursion = allow_target_recursion
         self.__init__parameters()
 
     def __init__parameters(self):
@@ -42,10 +43,15 @@ class DILP():
         self.clause_map = {}
         with tf.compat.v1.variable_scope("rule_weights", reuse=tf.compat.v1.AUTO_REUSE):
             for p in [self.language_frame.target] + self.program_template.p_a:
-#                 rule_manager = Optimized_Combinatorial_Generator(
-#                     self.program_template.p_a + [self.language_frame.target], self.program_template.rules[p], p, self.language_frame.p_e)
-                rule_manager = Optimized_Combinatorial_Generator(
-                    self.program_template.p_a, self.program_template.rules[p], p, self.language_frame.p_e)
+                if self.allow_target_recursion:
+                    rule_manager = Optimized_Combinatorial_Generator(
+                        self.program_template.p_a + [self.language_frame.target],
+                        self.program_template.rules[p], p, self.language_frame.p_e)
+                else:
+                    rule_manager = Optimized_Combinatorial_Generator(
+                        self.program_template.p_a, self.program_template.rules[p],
+                        p, self.language_frame.p_e)
+
                 generated = rule_manager.generate_clauses()
                 self.clause_map[p] = generated
                 self.rule_weights[p] = tf.compat.v1.get_variable(p.predicate + "_rule_weights",
@@ -90,7 +96,7 @@ class DILP():
             rule_weights = tf.reshape(self.rule_weights[predicate], [-1])
             weights[predicate] = (tf.reshape(tf.nn.softmax(rule_weights)[:, None], shape))
         return weights
-    
+
     def show_definition(self):
         rule = []
         for predicate in self.rule_weights:
@@ -102,7 +108,7 @@ class DILP():
             clauses = self.clause_map[predicate]
             pos = np.unravel_index(
                 np.argmax(weights, axis=None), weights.shape)
-            
+
             rule.append((clauses[0][pos[0]], clauses[1][pos[1]]))
             print(clauses[0][pos[0]])
             print(clauses[1][pos[1]])
@@ -116,7 +122,7 @@ class DILP():
                 print(clauses[1][indexes[1][i]])
             '''
             print('----------------------------')
-        
+
         return rule
 
     def train(self, steps=501, name='test'):
