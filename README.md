@@ -24,6 +24,7 @@ pyparsing==2.4.6
 ├── DATA - synthetic data set locatio
 ├── DILP - Diiferential Inductive Logic package
 ├── EDA  - Explorative Data Analysis
+├── requirements.txt  - python toolbox requirements 
 ├── LICENSE
 └── README.md
 
