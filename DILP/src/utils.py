@@ -73,7 +73,7 @@ def process_file(filename):
     with open(filename) as f:
         data = f.read().replace('\n', '')
         result = prolog_sentences.parseString(data)
-        print(len(result))
+        print(len(result['facts']))
         
         for idx in range(len(result['facts'])):
             fact = result['facts'][idx]
@@ -124,6 +124,7 @@ def output_rules(rules):
                 print(i.head.predicate,":",i.body[0].predicate,i.body[1].predicate)
                 sql_query+=f" %s and %s as %s,\n" % \
                                     (i.body[0].predicate, i.body[1].predicate, i.head.predicate)
+    print(sql_query)
     return sql_query
 
 
