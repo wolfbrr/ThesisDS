@@ -53,7 +53,7 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
         for q in predicates:
             print(q)
             tmp = df[df[q]==True]
-            variables = q.split('_')
+            variables = q.split('->')
             if len(variables)>1:
                 for i,j in zip(tmp.index.values, tmp[variables[1]]):
                     print(q, i, j)
@@ -79,5 +79,5 @@ def performance_metrics(y_pred, y_test, labels=[True, False]):
     print(f'MCC Score: {mcc:f}')
 
     conf_matrix = confusion_matrix(y_test, y_pred, labels=labels)
-    disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=labels)
+    disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix,  display_labels=['Positive','Negative'])
     disp.plot()
