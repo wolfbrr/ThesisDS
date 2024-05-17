@@ -48,16 +48,22 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
         os.remove(output_dir + '/facts.dilp') #in the case there was already a file, it is needed to be removed
     except:
         pass
-        
+
     with open(output_dir + '/facts.dilp', "a") as f:
         for q in predicates:
             print(q)
-            tmp = df[df[q]==True].index.values
-            print(tmp)
-            np.savetxt(f, tmp, fmt= q +'(%d).')
-            
-    df_.to_parquet(path=output_dir + '/df.parquet')
+            tmp = df[df[q]==True]
+            variables = q.split('_')
+            if len(variables)>1:
+                for i,j in zip(tmp.index.values, tmp[variables[1]]):
+                    print(q, i, j)
+                    f.writelines(f'%s(%d,%d).\n' % (q,i,j))
+            else:
+                print(tmp.index.values)
+                np.savetxt(f, tmp.index.values, fmt= q +'(%d).')
 
+
+    df_.to_parquet(path=output_dir + '/df.parquet')
 
 def performance_metrics(y_pred, y_test, labels=[True, False]):
     accuracy = accuracy_score(y_test, y_pred)

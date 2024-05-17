@@ -128,14 +128,17 @@ def output_rules(rules):
     return sql_query
 
 
-def create_table(con, input_dir):
+def create_table(con, input_dir, name=''):
     """ read a parquet file and return an asql table my_table """
     try:
         con.sql('DROP TABLE my_table')
         print("previous table dropped")
     except:
         pass
-    con.sql(f"CREATE TABLE my_table AS SELECT * FROM '%s'" % os.path.join(input_dir,'df.parquet'))
+    if name=='':
+        con.sql(f"CREATE TABLE my_table AS SELECT * FROM '%s'" % os.path.join(input_dir,'df.parquet'))
+    else:
+        con.sql(f"CREATE TABLE my_table AS SELECT * FROM '%s'" % os.path.join(input_dir,f'%s.parquet' % name))
 
     return con.sql("""select * from my_table""").df()
 
