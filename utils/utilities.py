@@ -6,6 +6,7 @@ import errno
 import numpy as np
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score, matthews_corrcoef
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-background"):
     """ create_facts_and_examples(df, target, predicates, output_dir = "fraud-background")
@@ -65,13 +66,14 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
 
     df_.to_parquet(path=output_dir + '/df.parquet')
 
-def performance_metrics(y_pred, y_test, labels=[True, False]):
+def performance_metrics(y_pred, y_test, labels=[True, False], title=''):
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
     mcc = matthews_corrcoef(y_test, y_pred)
-
+    
+    print(f'Performance of %s' % title)
     print(f'Accuracy: {accuracy:f}')
     print(f'Precision TP/(TP+FP): {precision:f}')
     print(f'Recall TP/(TP+FN): {recall:f}')
@@ -81,3 +83,4 @@ def performance_metrics(y_pred, y_test, labels=[True, False]):
     conf_matrix = confusion_matrix(y_test, y_pred, labels=labels)
     disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix,  display_labels=['Positive','Negative'])
     disp.plot()
+    plt.title(title)
