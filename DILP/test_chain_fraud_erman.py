@@ -6,7 +6,6 @@
 
 import sys
 sys.path.append("../utils/") 
-from utilities import performance_metrics
 import time
 
 from src.core import Term, Atom

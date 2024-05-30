@@ -6,7 +6,7 @@
 
 import sys
 sys.path.append("../utils/") 
-from utilities import performance_metrics
+#from utilities import performance_metrics
 import time
 
 from src.core import Term, Atom
@@ -29,12 +29,7 @@ rules[target] = (rules[target][0], Rule_Template(v=1, allow_intensional=True))
 
 
 language_frame = Language_Frame(target, p_e, constants)
-# program_template = Program_Template(p_a, rules, T=10)
 program_template = Program_Template(p_a, rules, T=6)
-
-
-# In[3]:
-
 
 print("DILP initialisation")
 dilp = DILP(language_frame, B, P, N, program_template, allow_target_recursion=True)
@@ -43,12 +38,6 @@ dilp.train()
 finish_time = time.time()
 print("execution time %d" % (finish_time - start_time))
 
-
-
-T=5
-program_template = Program_Template(p_a, rules, T=T)
-dilp = DILP(language_frame, B, P, N, program_template, allow_target_recursion=True)
-train(dilp)
 
 
 
