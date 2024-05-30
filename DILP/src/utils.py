@@ -50,7 +50,7 @@ INTENSIONAL_REQUIRED_MESSAGE = 'Atom is not intensional'
 
 def process_file(filename):
     # relationship will refer to 'track' in all of your examples
-    relationship = pp.Word(pp.nums + '-' + ' ' + '.' + pp.alphas + '_' +'{' + '}' + ',').setResultsName('relationship', listAllMatches=True)
+    relationship = pp.Word(pp.nums + '>' + '-' + ' ' + '.' + pp.alphas + '_' +'{' + '}' + ',').setResultsName('relationship', listAllMatches=True)
 
     number = pp.Word(pp.nums + '.')
     variable = pp.Word(pp.alphas)
