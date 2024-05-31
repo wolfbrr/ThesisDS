@@ -1,8 +1,14 @@
 '''Defines stateless utility functions
 '''
+import sys
+
+sys.path.append("../utils/")
+
 from src.core import Atom
 import pyparsing as pp
 from src.core import Term, Atom
+import os, time
+from utilities import performance_metrics
 
 def is_intensional(atom: Atom):
     '''Checks if the atom is intensional. If true returns true, otherwise returns false
@@ -44,7 +50,7 @@ INTENSIONAL_REQUIRED_MESSAGE = 'Atom is not intensional'
 
 def process_file(filename):
     # relationship will refer to 'track' in all of your examples
-    relationship = pp.Word(pp.alphas).setResultsName('relationship', listAllMatches=True)
+    relationship = pp.Word(pp.nums + '>' + '-' + ' ' + '.' + pp.alphas + '_' +'{' + '}' + ',').setResultsName('relationship', listAllMatches=True)
 
     number = pp.Word(pp.nums + '.')
     variable = pp.Word(pp.alphas)
@@ -72,7 +78,7 @@ def process_file(filename):
     with open(filename) as f:
         data = f.read().replace('\n', '')
         result = prolog_sentences.parseString(data)
-        print(len(result))
+        print(len(result['facts']))
         
         for idx in range(len(result['facts'])):
             fact = result['facts'][idx]
@@ -113,13 +119,52 @@ def process_dir(input_dir):
 
 
 def output_rules(rules):
-    sql_query=''
+    """ Print induced rules and convert them to a sql query"""
+    sql_query="select"
     for rule in rules[::-1]:
         for i in rule:
             if i==None:
                 pass
             else:
                 print(i.head.predicate,":",i.body[0].predicate,i.body[1].predicate)
-                sql_query+=f"select %s and %s as %s,\n" % \
+                sql_query+=f" \"%s\" and \"%s\" as \"%s\",\n" % \
                                     (i.body[0].predicate, i.body[1].predicate, i.head.predicate)
+    print(sql_query)
     return sql_query
+
+
+def create_table(con, input_dir, name=''):
+    """ read a parquet file and return an SQL table my_table """
+    try:
+        con.sql('DROP TABLE my_table')
+        print("previous table dropped")
+    except:
+        pass
+    if name=='':
+        con.sql(f"CREATE TABLE my_table AS SELECT * FROM '%s'" % os.path.join(input_dir,'df.parquet'))
+    else:
+        con.sql(f"CREATE TABLE my_table AS SELECT * FROM '%s'" % os.path.join(input_dir,f'%s.parquet' % name))
+
+    return con.sql("""select * from my_table""").df()
+
+def test_rule(con, sql_str, target_predicate="Target"):
+    """Test rule on the pandas data frame"""
+
+    df=con.sql(sql_str + 'from my_table ').df()
+    return df[[target_predicate]]
+
+def train(dilp):
+    """ training encapsulation for DILP"""
+    start_time = time.time()
+    dilp.train()
+    finish_time = time.time()
+    print("execution time %d" % (finish_time - start_time))
+
+def test(dilp, input_table, con):
+    """ testing encapsulation for DILP versus input table"""
+
+    rules = dilp.show_definition()
+    sql_str = output_rules(rules)
+    predicted_table = test_rule(con, sql_str, target_predicate=dilp.language_frame.target.predicate)
+    performance_metrics(predicted_table[dilp.language_frame.target.predicate], input_table[dilp.language_frame.target.predicate], labels=[True,False])
+    return sql_str

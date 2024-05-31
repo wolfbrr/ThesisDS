@@ -11,6 +11,7 @@ E. A. Lopez-Rojas , A. Elmir, and S. Axelsson. "PaySim: A financial mobile money
 and can be located on the Kaggle site at:
 https://www.kaggle.com/datasets/ealaxi/paysim1
 
+by runining run\_me\_first.py data will be downloaded to DATA\paysim1 folder
 
 ## requirements
 pandas
@@ -20,9 +21,10 @@ pyparsing==2.4.6
 ## directory and file structure
 
 ```
-├── DATA - synthetic data set
+├── DATA - synthetic data set locatio
 ├── DILP - Diiferential Inductive Logic package
 ├── EDA  - Explorative Data Analysis
+├── requirements.txt  - python toolbox requirements 
 ├── LICENSE
 └── README.md
 
