@@ -15,20 +15,12 @@ import tensorflow as tf
 import numpy as np
 from src.utils import process_file, process_dir, create_table, output_rules, test_rule, train, test
 from src.generate_template import create_templates
-import duckdb
 tf.random.set_seed(1000)
 np.random.seed(1000)
 import dill
 
 
 # In[2]:
-
-
-con = duckdb.connect(':memory:')
-# enable automatic query parallelization
-con.execute("PRAGMA threads=2")
-# enable caching of parquet metadata
-con.execute("PRAGMA enable_object_cache")
 
 
 # Main idea: We need to learn a rule: 
@@ -45,11 +37,9 @@ con.execute("PRAGMA enable_object_cache")
 
 term_x_0 = Term(True, 'X_0')
 term_x_1 = Term(True, 'X_1')
-input_dir = "../examples/chain-fraud/"
-input_table = create_table(con, input_dir)
-print(f'ratio of positives %f' % (100*input_table['Target'].sum()/len(input_table)))
+input_dir = "../examples/chain-fraud-erman/"
 target, p_e, constants, B, P, N = process_dir(input_dir)
-p_e
+print(p_e)
 
 
 # Fraud(Y) :- Fraud_chain(u1, u2), Orig(Y, u2) # v=2 (u1, u2)
@@ -63,7 +53,7 @@ p_e
 # In[5]:
 
 
-p_a, rules = create_templates(p_e, target, term_x_0)
+p_a, rules = create_templates(p_e[:2], target, term_x_0)
 rules[target] = (rules[target][0], Rule_Template(v=2, allow_intensional=True))#Fraud(Y) :- Fraud_chain(u1, u2), Orig(Y, u2)
 
 Fraud_trans = Atom([term_x_0, term_x_1], 'Fraud_trans')
@@ -79,17 +69,8 @@ rules[Fraud_trans] = (Rule_Template(v=1, allow_intensional=True), None) #Fraud_t
 rules[Pred_Transaction] = (Rule_Template(v=1, allow_intensional=False), None) #Orig(Y, U1), Dest(Y, U2) #v=1 (Y)
 
 language_frame = Language_Frame(target, p_e, constants)
-# program_template = Program_Template(p_a, rules, T=10)
 program_template = Program_Template(p_a, rules, T=6)
 
-
-# In[6]:
-
-
-rules
-
-
-# In[6]:
 
 
 print("DILP initialisation")
@@ -100,18 +81,9 @@ finish_time = time.time()
 print("execution time %d" % (finish_time - start_time))
 
 
-# In[39]:
 
 
-abcd_rules = dilp.show_definition()
-sql_str = output_rules(abcd_rules)
-input_table = create_table(con, input_dir)
-# predicted_table = test_rule(con, sql_str, target_predicate="Target")
-# performance_metrics(predicted_table["Target"],input_table["Target"], labels=[True,False])
-
-
-# In[ ]:
-
-
+derived_rules = dilp.show_definition()
+sql_str = output_rules(derived_rules)
 
 
