@@ -8,6 +8,22 @@ from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_sc
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
+def output_predicate(q, df, f, flag=True):
+    """ Formated output of a predicate from the data frame"""
+    variables = q.split('->')
+    tmp = df[df[q]==flag]
+    if len(variables)==2:
+        for i,j in zip(tmp.index.values, tmp[variables[1]]):
+            print(q, i, j)
+            f.writelines(f'%s(%d,%d).\n' % (q,i,j))
+    elif len(variables)>2:
+        for i,j in zip(tmp[variables[1]], tmp[variables[2]]):
+            print(q, i, j)
+            f.writelines(f'%s(%d,%d).\n' % (q,i,j))
+    else:
+        print(tmp.index.values)
+        np.savetxt(f, tmp.index.values, fmt= q +'(%d).')
+
 def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-background"):
     """ create_facts_and_examples(df, target, predicates, output_dir = "fraud-background")
 
@@ -30,7 +46,21 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
     except OSError as exc:
         if exc.errno != errno.EEXIST:
             raise
-
+    try:
+        os.remove(output_dir + '/facts.dilp') #in the case there was already a file, it is needed to be removed
+    except:
+        pass
+    
+    try:
+        os.remove(output_dir + '/positive.dilp') #in the case there was already a file, it is needed to be removed
+    except:
+        pass
+    
+    try:
+        os.remove(output_dir + '/negative.dilp') #in the case there was already a file, it is needed to be removed
+    except:
+        pass
+        
     df = df_.copy()
 
     # filter out the lines with facts that are False, fact file includes True examples for predicates, thus will not include those lines
@@ -39,29 +69,16 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
 
     tmp = df[df[target]==True].index.values
     print(target)
-    print(tmp)
-    np.savetxt(output_dir + '/positive.dilp', tmp, fmt=target+'(%d).') 
+    with open(output_dir + '/positive.dilp', "a") as f:
+        output_predicate(q=target, df=df, f=f, flag=True)
 
-    tmp = df[df[target]==False].index.values
-    np.savetxt(output_dir + '/negative.dilp', tmp, fmt=target+'(%d).')
-
-    try:
-        os.remove(output_dir + '/facts.dilp') #in the case there was already a file, it is needed to be removed
-    except:
-        pass
+    with open(output_dir + '/negative.dilp', "a") as f:
+        output_predicate(q=target, df=df, f=f, flag=False)
 
     with open(output_dir + '/facts.dilp', "a") as f:
         for q in predicates:
             print(q)
-            tmp = df[df[q]==True]
-            variables = q.split('->')
-            if len(variables)>1:
-                for i,j in zip(tmp.index.values, tmp[variables[1]]):
-                    print(q, i, j)
-                    f.writelines(f'%s(%d,%d).\n' % (q,i,j))
-            else:
-                print(tmp.index.values)
-                np.savetxt(f, tmp.index.values, fmt= q +'(%d).')
+            output_predicate(q=q, df=df, f=f, flag=True)
 
 
     df_.to_parquet(path=output_dir + '/df.parquet')
