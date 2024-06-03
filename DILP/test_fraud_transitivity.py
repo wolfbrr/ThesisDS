@@ -26,26 +26,18 @@ target, p_e, constants, B, P, N = process_dir(input_dir)
 print(p_e)
 print(target)
 
-
-p_a, rules = create_templates(p_e[:2], target, term_x_0)
-rules[target] = (Rule_Template(v=1, allow_intensional=True), rules[target][1])
-
-Fraud_trans = Atom([term_x_0, term_x_1], 'Fraud_trans')
+#--------------- Template Definition to change-------------------------------
+rules ={}
+p_a = []
+T=6
+rules[target] = (Rule_Template(v=1, allow_intensional=True), None)
 Pred_Transaction = Atom([term_x_0, term_x_1], 'Pred_Transaction')
-
-p_a.append(Fraud_trans)
 p_a.append(Pred_Transaction)
-
-rules[Fraud_trans] = (Rule_Template(v=1, allow_intensional=True), None) #Fraud_trans(X, U2):-  Dest(X, U2), Fraud(X).
-rules[Pred_Transaction] = (Rule_Template(v=1, allow_intensional=False), None) #Orig(Y, U1), Dest(Y, U2) #v=1 (Y)
-
+rules[Pred_Transaction] = (Rule_Template(v=0, allow_intensional=False), None)
+#------------------------------------------------------
 print(rules)
-
 language_frame = Language_Frame(target, p_e, constants)
-program_template = Program_Template(p_a, rules, T=6)
-
-
-
+program_template = Program_Template(p_a, rules, T=T)
 print("DILP initialisation")
 dilp = DILP(language_frame, B, P, N, program_template, allow_target_recursion=True)
 print("DILP train")
