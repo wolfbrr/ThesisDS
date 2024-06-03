@@ -28,7 +28,7 @@ print(target)
 
 
 p_a, rules = create_templates(p_e[:2], target, term_x_0)
-rules[target][0], Rule_Template(v=1, allow_intensional=True)#Fraud(Y) :- Fraud_chain(u1, u2), Orig(Y, u2)
+rules[target] = (Rule_Template(v=1, allow_intensional=True), rules[target][1])
 
 Fraud_trans = Atom([term_x_0, term_x_1], 'Fraud_trans')
 Pred_Transaction = Atom([term_x_0, term_x_1], 'Pred_Transaction')
