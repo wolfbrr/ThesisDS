@@ -12,13 +12,14 @@ def output_predicate(q, df, f, flag=True):
     """ Formated output of a predicate from the data frame"""
     variables = q.split('->')
     tmp = df[df[q]==flag]
+    
     if len(variables)==2:
         for i,j in zip(tmp.index.values, tmp[variables[1]]):
-            print(q, i, j)
+            print(q, i, j, 'flag=', flag)
             f.writelines(f'%s(%d,%d).\n' % (q,i,j))
     elif len(variables)>2:
         for i,j in zip(tmp[variables[1]], tmp[variables[2]]):
-            print(q, i, j)
+            print(q, i, j, 'flag=', flag)
             f.writelines(f'%s(%d,%d).\n' % (q,i,j))
     else:
         print(tmp.index.values)
@@ -68,7 +69,7 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
     df = df[filter_ind]
 
     tmp = df[df[target]==True].index.values
-    print(target)
+
     with open(output_dir + '/positive.dilp', "a") as f:
         output_predicate(q=target, df=df, f=f, flag=True)
 
