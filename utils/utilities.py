@@ -3,6 +3,7 @@ This module provides a function to convert tabular data to background knowledge,
 """
 import os
 import errno
+import re
 import numpy as np
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score, matthews_corrcoef
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -10,7 +11,8 @@ import matplotlib.pyplot as plt
 
 def output_predicate(q, df, f, flag=True):
     """ Formated output of a predicate from the data frame"""
-    variables = q.split('->')
+    # variables = q.split('--')
+    variables = re.split('--|->', q)
     tmp = df[df[q]==flag]
     
     if len(variables)==2:
