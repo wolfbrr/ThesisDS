@@ -50,7 +50,7 @@ INTENSIONAL_REQUIRED_MESSAGE = 'Atom is not intensional'
 
 def process_file(filename):
     # relationship will refer to 'track' in all of your examples
-    relationship = pp.Word(pp.nums + '>' + '-' + ' ' + '.' + pp.alphas + '_' +'{' + '}' + ',').setResultsName('relationship', listAllMatches=True)
+    relationship = pp.Word(pp.nums + '>' + '--'+ '-' + ' ' + '.' + pp.alphas + '_' +'{' + '}' + ',').setResultsName('relationship', listAllMatches=True)
 
     number = pp.Word(pp.nums + '.')
     variable = pp.Word(pp.alphas)
@@ -77,6 +77,9 @@ def process_file(filename):
     constants = set()
     with open(filename) as f:
         data = f.read().replace('\n', '')
+        if len(data)==0:
+            print("is empty file")
+            return atoms, predicates, constants
         result = prolog_sentences.parseString(data)
         print(len(result['facts']))
         
@@ -103,7 +106,7 @@ def process_dir(input_dir):
         '%s/negative.dilp' % input_dir)
     print("end negative examples processing")
 
-    if not (target_p == target_n):
+    if not (target_p == target_n) and len(target_n)>0:
         raise Exception('Positive and Negative files have different targets')
     elif not len(target_p) == 1:
         raise Exception('Can learn only one predicate at a time')
