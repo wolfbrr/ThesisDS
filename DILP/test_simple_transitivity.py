@@ -26,16 +26,17 @@ target, p_e, constants, B, P, N = process_dir(input_dir)
 print(p_e)
 print(target)
 
-
+#--------------- Template Definition to change-------------------------------
+T=6
 p_a, rules = create_templates(p_e, target, term_x_0)
-
-rules[target] = ( rules[target][0], Rule_Template(v=1, allow_intensional=True))
+print(p_a)
+rules[target] = (rules[target][0], Rule_Template(v=1, allow_intensional=True))
 language_frame = Language_Frame(target, p_e, constants)
-program_template = Program_Template(p_a, rules, T=6)
+program_template = Program_Template(p_a, rules, T=T)
 
+#------------------------------------------------------
 print(rules)
-
-
+print(f'target[0].v=%d, allow_intentsional=%d' % (rules[target][0].v, rules[target][0].allow_intensional))
 print("DILP initialisation")
 dilp = DILP(language_frame, B, P, N, program_template, allow_target_recursion=True)
 print("DILP train")
