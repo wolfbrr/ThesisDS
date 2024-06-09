@@ -21,7 +21,7 @@ np.random.seed(1000)
 
 term_x_0 = Term(True, 'X_0')
 term_x_1 = Term(True, 'X_1')
-input_dir = "../examples/debug-simple-transitivity/"
+input_dir = "../examples/G.19/"
 target, p_e, constants, B, P, N = process_dir(input_dir)
 print(p_e)
 print(target)

@@ -2,7 +2,7 @@
 
 #SBATCH --partition=gpu
 #SBATCH --gpus=1
-#SBATCH --job-name=G.19
+#SBATCH --job-name=debug-transitivity
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=18
 #SBATCH --time=05:00:00
@@ -15,4 +15,4 @@ module load OpenSSL/1.1
 module load TensorFlow/2.11.0-foss-2022a-CUDA-11.7.0
 
 cd $HOME/ThesisDS/DILP
-srun python -u test_g19.py
+srun python -u test_debug_transitivity.py
