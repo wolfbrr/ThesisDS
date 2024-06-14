@@ -125,13 +125,14 @@ def output_rules(rules):
     """ Print induced rules and convert them to a sql query"""
     sql_query="select"
     for rule in rules[::-1]:
-        for i in rule:
-            if i==None:
-                pass
-            else:
-                print(i.head.predicate,":",i.body[0].predicate,i.body[1].predicate)
-                sql_query+=f" \"%s\" and \"%s\" as \"%s\",\n" % \
-                                    (i.body[0].predicate, i.body[1].predicate, i.head.predicate)
+        if rule[1]==None:
+            sql_query+=f" \"%s\" and \"%s\" as \"%s\",\n" % \
+                (rule[0].body[0].predicate, rule[0].body[1].predicate, rule[0].head.predicate)
+        else:
+            sql_query+=f" \"%s\" and \"%s\" OR \"%s\" and \"%s\"  as \"%s\",\n" % \
+                (rule[0].body[0].predicate, rule[0].body[1].predicate, \
+                 rule[1].body[0].predicate, rule[1].body[1].predicate, rule[0].head.predicate)
+
     print(sql_query)
     return sql_query
 
