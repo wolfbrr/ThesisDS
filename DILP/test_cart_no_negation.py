@@ -26,6 +26,8 @@ np.random.seed(1000)
 
 term_x_0 = Term(True, 'X_0')
 input_dir = '../examples/fraud-cart-short/'
+input_dir = '../examples/fraud-cart-short-no-negation/'
+
 
 target, p_e, constants, B, P, N = process_dir(input_dir)
 print(p_e)
@@ -33,21 +35,21 @@ print(target)
 
 
 T=5
-p_a, rules = create_templates(p_e[:4], target, term_x_0)
+p_a, rules = create_templates(p_e[:-1], target, term_x_0)
 
-rules[target] = (rules[target][0], rules[target][0])
+#rules[target] = (rules[target][0], rules[target][0])
 language_frame = Language_Frame(target, p_e, constants)
 program_template = Program_Template(p_a, rules, T=T)
 
 print("DILP initialisation")
-dilp = DILP(language_frame, B, P, N, program_template, allow_target_recursion=False)
+dilp = DILP(language_frame, B, P, N, program_template, allow_target_recursion=True)
 print("DILP train")
 train(dilp)
 derived_rules = dilp.show_definition()
 sql_str = output_rules(derived_rules)
 
 dill.dumps(dilp)
-with open('cart_dilp_Pe_m1_short_with_negation.dill', 'wb') as file:
+with open('cart_dilp_Pe_m1_short_no_negation.dill', 'wb') as file:
     dill.dump(dilp, file)
 print("saved dill file")
 
