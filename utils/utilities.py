@@ -67,7 +67,9 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
 
     # filter out the lines with facts that are False, fact file includes True examples for predicates, thus will not include those lines
 
-    filter_ind = df[predicates+[target]].sum(axis=1)!=0
+    # filter_ind = df[predicates+[target]].sum(axis=1)!=0
+    filter_ind = df[predicates].sum(axis=1)!=0
+
     df = df[filter_ind]
 
     tmp = df[df[target]==True].index.values
