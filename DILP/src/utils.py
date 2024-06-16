@@ -164,11 +164,11 @@ def train(dilp):
     finish_time = time.time()
     print("execution time %d" % (finish_time - start_time))
 
-def test(dilp, input_table, con):
+def test(dilp, input_table, con, title=''):
     """ testing encapsulation for DILP versus input table"""
 
     rules = dilp.show_definition()
     sql_str = output_rules(rules)
     predicted_table = test_rule(con, sql_str, target_predicate=dilp.language_frame.target.predicate)
-    performance_metrics(predicted_table[dilp.language_frame.target.predicate], input_table[dilp.language_frame.target.predicate], labels=[True,False])
+    performance_metrics(predicted_table[dilp.language_frame.target.predicate], input_table[dilp.language_frame.target.predicate], labels=[True,False], title=title)
     return sql_str
