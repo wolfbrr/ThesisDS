@@ -2,13 +2,13 @@
 
 #SBATCH --partition=gpu
 #SBATCH --gpus=1
-#SBATCH --job-name=debug-transitivity
+#SBATCH --job-name=CART
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=18
 #SBATCH --time=05:00:00
-#SBATCH --output=debug_transitivity_%A.out
+#SBATCH --output=CART_no-negation_pa1_%A.out
 
 source load-dependencies
 
 cd $HOME/ThesisDS/DILP
-srun python -u test_debug_transitivity.py
+srun python -u test_cart_no_negation_pa1.py

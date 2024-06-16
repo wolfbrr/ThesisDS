@@ -30,7 +30,8 @@ print(target)
 T=6
 p_a, rules = create_templates(p_e, target, term_x_0)
 print(p_a)
-rules[target] = (rules[target][0], Rule_Template(v=1, allow_intensional=True))
+rules[target] = (Rule_Template(v=0, allow_intensional=False), Rule_Template(v=1, allow_intensional=True))
+
 language_frame = Language_Frame(target, p_e, constants)
 program_template = Program_Template(p_a, rules, T=T)
 
