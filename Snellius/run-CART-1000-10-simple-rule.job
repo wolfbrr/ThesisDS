@@ -6,9 +6,9 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=18
 #SBATCH --time=05:00:00
-#SBATCH --output=CART_1000_10_%A.out
+#SBATCH --output=CART_1000_10_simple_rule_%A.out
 
 source load-dependencies
 
 cd $HOME/ThesisDS/DILP
-srun python -u test_cart_1000_10.py
+srun python -u test_cart_1000_10_simple_rule.py

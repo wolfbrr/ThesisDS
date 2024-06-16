@@ -45,11 +45,13 @@ print("DILP train")
 train(dilp)
 derived_rules = dilp.show_definition()
 
-dill.dumps(dilp)
 with open('cart_dilp_Pe_m1_short_1000_10_with_negation.dill', 'wb') as file:
     dill.dump(dilp, file)
 print("saved dill file")
 
+print("train performance")
+test(dilp, create_table(con, input_dir, 'df'), con)
+print("test performance")
 test(dilp, create_table(con, input_dir, 'df_test'), con)
 
 
