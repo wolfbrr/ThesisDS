@@ -26,7 +26,7 @@ def output_predicate(q, df, f, flag=True):
         print(tmp.index.values)
         np.savetxt(f, tmp.index.values, fmt= q +'(%d).')
 
-def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-background"):
+def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-background", filter_null_columns=True):
     """ create_facts_and_examples(df, target, predicates, output_dir = "fraud-background")
 
         Converts a tabular data to background knowledge: facts, positive, negative examp;es
@@ -65,12 +65,14 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
         
     df = df_.copy()
 
-    # filter out the lines with facts that are False, fact file includes True examples for predicates, thus will not include those lines
-
-    # filter_ind = df[predicates+[target]].sum(axis=1)!=0
-    filter_ind = df[predicates].sum(axis=1)!=0
-
-    df = df[filter_ind]
+    # filter out the lines with facts that are False, fact file includes True examples for predicates, 
+    # for 1 arity some there is a chance that the constants won't appear in the facts but will in Positive,negative examples
+    # for recursion, that might not be the case
+    if filter_null_columns:
+            
+        filter_ind = df[predicates].sum(axis=1)!=0
+    
+        df = df[filter_ind]
 
     tmp = df[df[target]==True].index.values
 
