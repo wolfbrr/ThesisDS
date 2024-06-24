@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --job-name=CART
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --time=05:00:00
+#SBATCH --output=CART_no-negation_%A.out
+
+source load-dependencies
+
+cd $HOME/ThesisDS/DILP
+srun python -u test_cart_no_negation.py

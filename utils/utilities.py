@@ -3,6 +3,7 @@ This module provides a function to convert tabular data to background knowledge,
 """
 import os
 import errno
+import re
 import numpy as np
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score, matthews_corrcoef
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -10,21 +11,22 @@ import matplotlib.pyplot as plt
 
 def output_predicate(q, df, f, flag=True):
     """ Formated output of a predicate from the data frame"""
-    variables = q.split('->')
+    # variables = q.split('--')
+    variables = re.split('--|->', q)
     tmp = df[df[q]==flag]
     if len(variables)==2:
         for i,j in zip(tmp.index.values, tmp[variables[1]]):
-            print(q, i, j)
+            print(q, i, j, 'flag=', flag)
             f.writelines(f'%s(%d,%d).\n' % (q,i,j))
     elif len(variables)>2:
         for i,j in zip(tmp[variables[1]], tmp[variables[2]]):
-            print(q, i, j)
+            print(q, i, j, 'flag=', flag)
             f.writelines(f'%s(%d,%d).\n' % (q,i,j))
     else:
         print(tmp.index.values)
         np.savetxt(f, tmp.index.values, fmt= q +'(%d).')
 
-def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-background"):
+def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-background", filter_null_columns=True):
     """ create_facts_and_examples(df, target, predicates, output_dir = "fraud-background")
 
         Converts a tabular data to background knowledge: facts, positive, negative examp;es
@@ -63,12 +65,17 @@ def create_facts_and_examples(df_, target, predicates, output_dir = "fraud-backg
         
     df = df_.copy()
 
-    # filter out the lines with facts that are False, fact file includes True examples for predicates, thus will not include those lines
-    filter_ind = df[predicates].sum(axis=1)!=0
-    df = df[filter_ind]
+    # filter out the lines with facts that are False, fact file includes True examples for predicates, 
+    # for 1 arity some there is a chance that the constants won't appear in the facts but will in Positive,negative examples
+    # for recursion, that might not be the case
+    if filter_null_columns:
+            
+        filter_ind = df[predicates].sum(axis=1)!=0
+    
+        df = df[filter_ind]
 
     tmp = df[df[target]==True].index.values
-    print(target)
+
     with open(output_dir + '/positive.dilp', "a") as f:
         output_predicate(q=target, df=df, f=f, flag=True)
 

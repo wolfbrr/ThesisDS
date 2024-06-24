@@ -1,0 +1,30 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: pip in /gpfs/home1/bwolfson/.local/lib/python3.10/site-packages (24.0)
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: scikit-learn in /gpfs/home1/bwolfson/.local/lib/python3.10/site-packages (1.5.0)
+Requirement already satisfied: numpy>=1.19.5 in /gpfs/admin/_hpc/sw/arch/INTEL-AVX512/RHEL8/EB_production/2022/software/SciPy-bundle/2022.05-foss-2022a/lib/python3.10/site-packages (from scikit-learn) (1.22.3)
+Requirement already satisfied: scipy>=1.6.0 in /gpfs/admin/_hpc/sw/arch/INTEL-AVX512/RHEL8/EB_production/2022/software/SciPy-bundle/2022.05-foss-2022a/lib/python3.10/site-packages (from scikit-learn) (1.8.1)
+Requirement already satisfied: joblib>=1.2.0 in /gpfs/home1/bwolfson/.local/lib/python3.10/site-packages (from scikit-learn) (1.4.2)
+Requirement already satisfied: threadpoolctl>=3.1.0 in /gpfs/admin/_hpc/sw/arch/INTEL-AVX512/RHEL8/EB_production/2022/software/Python/3.10.4-GCCcore-11.3.0/lib/python3.10/site-packages (from scikit-learn) (3.1.0)
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: duckdb in /gpfs/home1/bwolfson/.local/lib/python3.10/site-packages (1.0.0)
+2024-06-18 10:01:02.956187: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX512_VNNI
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-06-18 10:01:03.156018: I tensorflow/core/util/port.cc:104] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+slurmstepd: error: *** JOB 6670251 ON gcn34 CANCELLED AT 2024-06-18T15:01:10 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 6670251.0 ON gcn34 CANCELLED AT 2024-06-18T15:01:10 DUE TO TIME LIMIT ***
+
+JOB STATISTICS
+==============
+Job ID: 6670251
+Cluster: snellius
+User/Group: bwolfson/bwolfson
+State: TIMEOUT (exit code 0)
+Nodes: 1
+Cores per node: 18
+CPU Utilized: 04:59:14
+CPU Efficiency: 5.53% of 3-18:08:42 core-walltime
+Job Wall-clock time: 05:00:29
+Memory Utilized: 2.60 GB
+Memory Efficiency: 2.16% of 120.00 GB

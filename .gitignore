@@ -3,8 +3,11 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 #*.dilp
-*parquet
-
+#*parquet
+examples/fraud-symb-full/
+examples/fraud-cart
+examples/fraud-cart-no-negation
+fraud.parquet
 #jupyter checkpoints
 .ipynb_checkpoints/
 .vir*

@@ -50,7 +50,7 @@ INTENSIONAL_REQUIRED_MESSAGE = 'Atom is not intensional'
 
 def process_file(filename):
     # relationship will refer to 'track' in all of your examples
-    relationship = pp.Word(pp.nums + '>' + '-' + ' ' + '.' + pp.alphas + '_' +'{' + '}' + ',').setResultsName('relationship', listAllMatches=True)
+    relationship = pp.Word(pp.nums + '>' + '--'+ '-' + ' ' + '.' + pp.alphas + '_' +'{' + '}' + ',').setResultsName('relationship', listAllMatches=True)
 
     number = pp.Word(pp.nums + '.')
     variable = pp.Word(pp.alphas)
@@ -77,6 +77,9 @@ def process_file(filename):
     constants = set()
     with open(filename) as f:
         data = f.read().replace('\n', '')
+        if len(data)==0:
+            print("is empty file")
+            return atoms, predicates, constants
         result = prolog_sentences.parseString(data)
         print(len(result['facts']))
         
@@ -103,7 +106,7 @@ def process_dir(input_dir):
         '%s/negative.dilp' % input_dir)
     print("end negative examples processing")
 
-    if not (target_p == target_n):
+    if not (target_p == target_n) and len(target_n)>0:
         raise Exception('Positive and Negative files have different targets')
     elif not len(target_p) == 1:
         raise Exception('Can learn only one predicate at a time')
@@ -122,13 +125,14 @@ def output_rules(rules):
     """ Print induced rules and convert them to a sql query"""
     sql_query="select"
     for rule in rules[::-1]:
-        for i in rule:
-            if i==None:
-                pass
-            else:
-                print(i.head.predicate,":",i.body[0].predicate,i.body[1].predicate)
-                sql_query+=f" \"%s\" and \"%s\" as \"%s\",\n" % \
-                                    (i.body[0].predicate, i.body[1].predicate, i.head.predicate)
+        if rule[1]==None:
+            sql_query+=f" \"%s\" and \"%s\" as \"%s\",\n" % \
+                (rule[0].body[0].predicate, rule[0].body[1].predicate, rule[0].head.predicate)
+        else:
+            sql_query+=f" \"%s\" and \"%s\" OR \"%s\" and \"%s\"  as \"%s\",\n" % \
+                (rule[0].body[0].predicate, rule[0].body[1].predicate, \
+                 rule[1].body[0].predicate, rule[1].body[1].predicate, rule[0].head.predicate)
+
     print(sql_query)
     return sql_query
 
@@ -160,11 +164,11 @@ def train(dilp):
     finish_time = time.time()
     print("execution time %d" % (finish_time - start_time))
 
-def test(dilp, input_table, con):
+def test(dilp, input_table, con, title=''):
     """ testing encapsulation for DILP versus input table"""
 
     rules = dilp.show_definition()
     sql_str = output_rules(rules)
     predicted_table = test_rule(con, sql_str, target_predicate=dilp.language_frame.target.predicate)
-    performance_metrics(predicted_table[dilp.language_frame.target.predicate], input_table[dilp.language_frame.target.predicate], labels=[True,False])
+    performance_metrics(predicted_table[dilp.language_frame.target.predicate], input_table[dilp.language_frame.target.predicate], labels=[True,False], title=title)
     return sql_str
