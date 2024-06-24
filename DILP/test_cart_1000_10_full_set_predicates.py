@@ -33,7 +33,7 @@ print(target)
 
 
 T=5
-p_a, rules = create_templates(p_e[:7], target, term_x_0)
+p_a, rules = create_templates(p_e, target, term_x_0)
 print(p_a)
 
 rules[target] = (rules[target][0], rules[target][0])

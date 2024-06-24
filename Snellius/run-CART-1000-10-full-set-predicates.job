@@ -5,7 +5,7 @@
 #SBATCH --job-name=CART
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=18
-#SBATCH --time=06:00:00
+#SBATCH --time=08:00:00
 #SBATCH --output=CART_1000_10_full_set_%A.out
 
 source load-dependencies
