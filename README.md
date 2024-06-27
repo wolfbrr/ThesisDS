@@ -15,18 +15,25 @@ by runining run\_me\_first.py data will be downloaded to DATA\paysim1 folder
 
 ## requirements
 pandas
+
 pyarrow
+
 duckdb 
+
 pyparsing==2.4.6
 ## directory and file structure
 
 ```
-├── DATA - synthetic data set locatio
-├── DILP - Diiferential Inductive Logic package
-├── EDA  - Explorative Data Analysis
-├── requirements.txt  - python toolbox requirements 
-├── LICENSE
-└── README.md
+.
+├── DATA  - PaySim dataset location
+├── DILP  - DILP main code
+├── EDA   - Explorative Data Analysis
+├── examples - generated scenarions for testing
+├── Snellius - Snellius scripts to run examples
+├── utils    - utility folder for examples generation
+├── README.md
+├── requirements.txt - list of dependencies 
+└── run_me_first.py  - downloads PaySim data set from Kaggle to DATA
 
 ```
 
