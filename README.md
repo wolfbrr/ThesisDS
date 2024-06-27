@@ -14,13 +14,26 @@ https://www.kaggle.com/datasets/ealaxi/paysim1
 by runining run\_me\_first.py data will be downloaded to DATA\paysim1 folder
 
 ## requirements
+dill==0.3.8
+
+duckdb==0.10.2
+
+matplotlib==3.8.0
+
+numpy==2.0.0
+
+opendatasets==0.1.22
+
+pyparsing==2.4.6
+
+scikit\_learn==1.2.2
+
+tensorflow==2.16.1
+
 pandas
 
 pyarrow
 
-duckdb 
-
-pyparsing==2.4.6
 ## directory and file structure
 
 ```
