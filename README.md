@@ -13,6 +13,9 @@ https://www.kaggle.com/datasets/ealaxi/paysim1
 
 by runining run\_me\_first.py data will be downloaded to DATA\paysim1 folder
 
+the majority of DILP code is based on
+https://github.com/ai-systems/DILP-Core
+
 ## requirements
 dill==0.3.8
 
